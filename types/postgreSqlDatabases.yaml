@@ -1,0 +1,88 @@
+namespace: Radius.Data
+types:
+  postgreSqlDatabases:
+    description: |
+      The Radius.Data/postgreSqlDatabases Resource Type deploys a PostgreSQL graph database. To create a new database, define an Application and Container resource in your application definition Bicep file.
+
+      ```
+      extension radius
+      param environment string
+
+      resource myApplication 'Radius.Core/applications@2025-08-01-preview' = { ... }
+      resource myContainer 'Radius.Compute/containers@2025-08-01-preview' = { ... }
+      ```
+
+      Then add a `postgreSqlDatabases` resource.
+
+      ```
+      resource postgres 'Radius.Data/postgreSqlDatabases@2025-10-01-preview' = {
+        name: 'postgres'
+        properties: {
+          application: myApplication.id
+          environment: environment
+        }
+      }
+      ```
+
+      To connect to the new database, add a connection between the Container and the new database. The final Container resource should look similar to:
+
+      ```
+      resource myContainer 'Radius.Compute/containers@2025-08-01-preview' = {
+        name: 'myContainer'
+        properties: {
+          environment: environment
+          application: myApplication.id
+          containers: { ... }
+          connections: {
+            postgres: {
+              source: postgres.id
+            }
+          }
+        }
+      }
+      ```
+
+      Within your container, your application code can obtain the database name, host, port, username, and password values via environment variables which are automatically created. 
+
+      - CONNECTION_POSTGRES_HOST
+      - CONNECTION_POSTGRES_PORT
+      - CONNECTION_POSTGRES_DATABASE
+      - CONNECTION_POSTGRES_USERNAME
+      - CONNECTION_POSTGRES_PASSWORD
+
+    apiVersions:
+      '2023-10-01-preview':
+        schema: 
+          type: object
+          properties:
+            environment:
+              type: string
+              description: (Required) The Radius Environment ID. Typically provided by the rad CLI. The typical value is `environment`.
+            application:
+              type: string
+              description: (Optional) The Radius Application ID when the database is app-scoped. Omit to provision a shared database in an Environment.
+            size:
+              type: string
+              enum: [S, M, L, XL]
+              description: (Optional) The size of the PostgreSQL database.
+            database:
+              type: string
+              description: (Read-only) The name of the database.
+              readOnly: true
+            host:
+              type: string
+              description: (Read-only) The host name of the database.
+              readOnly: true
+            port:
+              type: string
+              description: (Read-only) The port number of the database.
+              readOnly: true
+            username:
+              type: string
+              description: (Read-only) The username for the database.
+              readOnly: true
+            password:
+              type: string
+              description: (Read-only) The password for the database.
+              readOnly: true
+          required: [environment]
