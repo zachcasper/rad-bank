@@ -4,7 +4,6 @@ types:
     description: |
       The Radius.Data/mySqlDatabases Resource Type deploys a MySQL database. To deploy a new MySQL database, add the mySqlDatabases resource to the application definition Bicep file.
 
-      ```
       extension radius
       param environment string 
 
@@ -17,11 +16,9 @@ types:
           environment: environment
         }
       }
-      ```
 
       To connect your container to the database, create a connection from the Container resource to the database as shown below. 
 
-      ```
       resource frontend 'Applications.Core/containers@2023-10-01-preview' = {
         name: 'frontend'
         properties: {
@@ -42,19 +39,18 @@ types:
           }
         }
       }
-      ```
 
       The connection automatically injects environment variables into the container for all properties from the database. The environment variables are named `CONNECTION_<CONNECTION-NAME>_<PROPERTY-NAME>`. In this example, the connection name is `mysqldb` so the environment variables will be:
  
-      - CONNECTION_MYSQLDB_DATABASE
-      - CONNECTION_MYSQLDB_USERNAME
-      - CONNECTION_MYSQLDB_PASSWORD
-      - CONNECTION_MYSQLDB_VERSION
-      - CONNECTION_MYSQLDB_HOST
-      - CONNECTION_MYSQLDB_PORT
+      CONNECTION_MYSQLDB_DATABASE
+      CONNECTION_MYSQLDB_USERNAME
+      CONNECTION_MYSQLDB_PASSWORD
+      CONNECTION_MYSQLDB_VERSION
+      CONNECTION_MYSQLDB_HOST
+      CONNECTION_MYSQLDB_PORT
 
     apiVersions:
-      '2023-10-01-preview':
+      '2025-08-01-preview':
         schema:
           type: object
           properties:

@@ -4,7 +4,6 @@ types:
     description: |
       The Radius.Compute/containers Resource Type is the primary resource type for running one or more containers. It is always part of a Radius Application. To deploy a Container add a resource to the application definition Bicep file.
 
-      ```
       extension radius
       param environment string 
 
@@ -22,13 +21,11 @@ types:
           }
         }
       }
-      ```
 
       By default, Containers deploys to Kubernetes. In this case, a Kubernetes Deployment named myContainer is deployed which includes a Pod named myContainer. Your Radius environment may deploy to other container platforms such as Azure Container Instances. 
 
       To accept network connections, expose a port on the container.
 
-      ```
       resource myContainer 'Radius.Compute/containers@2025-08-01-preview' = {
         name: 'myContainer'
         properties: {
@@ -46,13 +43,11 @@ types:
           }
         }
       }
-      ```
       
       When a port is included, a Kubernetes Service named demo with the type ClusterIP is created.
       
       To create a emphemeral emptyDir shared between two containers add a Containers.properties.volumes.
 
-      ```
       resource myContainer 'Radius.Compute/containers@2025-08-01-preview' = {
         name: 'myContainer'
         properties: {
@@ -85,12 +80,11 @@ types:
           }
         }
       }
-      ```
 
       To mount a persistent volume or secret see the PersistentVolumes and Secrets Resource Types.
 
     apiVersions:
-      '2023-10-01-preview':
+      '2025-08-01':
         schema: 
           type: object
           properties:
@@ -102,7 +96,7 @@ types:
               description: (Required) The Radius Application ID. `myApplication.id` for example.
             connections:
               type: object
-              description: '(Optional) Map of resources this container is dependent upon. `db: { source: db.id }` for example.'
+              description: '(Optional) Map of resources this container is dependent upon. `db: { source: db.id } for example.'
               additionalProperties:
                 type: object
                 properties:
@@ -412,7 +406,7 @@ types:
                             type: integer
                             description: (Optional) The absolute value of the metric as a quantity.
                     required: [kind, target]
-              required: [metric]
+              required: [metrics]
             extensions:
               type: object
               description: (Optional) Properties for additional functionality. daprSidecar is the only available option.
@@ -443,7 +437,7 @@ types:
                   description: (Required) Platform-specific properties.
               required: [platformName]
           required: [environment, application, containers]
-      '2025-10-14-preview':
+      '2025-08-01-preview':
         schema: 
           type: object
           properties:
@@ -455,7 +449,7 @@ types:
               description: (Required) The Radius Application ID. `myApplication.id` for example.
             connections:
               type: object
-              description: '(Optional) Map of resources this container is dependent upon. `db: { source: db.id }` for example.'
+              description: '(Optional) Map of resources this container is dependent upon. `db: { source: db.id } for example.'
               additionalProperties:
                 type: object
                 properties:
@@ -765,7 +759,7 @@ types:
                             type: integer
                             description: (Optional) The absolute value of the metric as a quantity.
                     required: [kind, target]
-              required: [metric]
+              required: [metrics]
             extensions:
               type: object
               description: (Optional) Properties for additional functionality. daprSidecar is the only available option.

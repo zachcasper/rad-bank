@@ -8,7 +8,7 @@ types:
       extension radius
       param environment string
 
-      resource myapplication 'Radius.Core/applications@2025-08-01-preview' = { ... }
+      resource myApplication 'Radius.Core/applications@2025-08-01-preview' = { ... }
       resource myContainer 'Radius.Compute/containers@2025-08-01-preview' = { ... }
       ```
 
@@ -18,7 +18,7 @@ types:
       resource neo4j 'Radius.Data/neo4jDatabases@2025-09-11-preview' = {
         name: 'neo4j'
         properties: {
-          application: myapplication.id
+          application: myApplication.id
           environment: environment
         }
       }
@@ -31,7 +31,7 @@ types:
         name: 'myContainer'
         properties: {
           environment: environment
-          application: myapplication.id
+          application: myApplication.id
           containers: { ... }
           connections: {
             neo4jDb: {
@@ -51,7 +51,7 @@ types:
       - CONNECTION_NEO4JDB_PASSWORD
 
     apiVersions:
-      '2023-10-01-preview':
+      '2025-09-11-preview':
         schema:
           type: object
           properties:

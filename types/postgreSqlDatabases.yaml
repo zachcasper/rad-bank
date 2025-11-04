@@ -1,22 +1,15 @@
 namespace: Radius.Data
 types:
-  postgreSqlDatabases:
+  postgreSqlDatabases:  
     description: |
-      The Radius.Data/postgreSqlDatabases Resource Type deploys a PostgreSQL graph database. To create a new database, define an Application and Container resource in your application definition Bicep file.
-
+      The Radius.Data/postgreSQLDatabases Resource Type deploys a PostgresSQL database. To deploy a new PostgresSQL database, add the postgreSQLDatabases resource to the application definition Bicep file.
+      
       ```
       extension radius
-      param environment string
+      param environment string 
 
-      resource myApplication 'Radius.Core/applications@2025-08-01-preview' = { ... }
-      resource myContainer 'Radius.Compute/containers@2025-08-01-preview' = { ... }
-      ```
-
-      Then add a `postgreSqlDatabases` resource.
-
-      ```
-      resource postgres 'Radius.Data/postgreSqlDatabases@2025-10-01-preview' = {
-        name: 'postgres'
+      resource database 'Radius.Data/postgreSqlDatabases@2025-08-01-preview' = {
+        name: 'database'
         properties: {
           application: myApplication.id
           environment: environment
@@ -24,65 +17,72 @@ types:
       }
       ```
 
-      To connect to the new database, add a connection between the Container and the new database. The final Container resource should look similar to:
-
+      To connect your container to the database, create a connection from the Container resource to the database as shown below. 
       ```
-      resource myContainer 'Radius.Compute/containers@2025-08-01-preview' = {
-        name: 'myContainer'
+      resource myApplication 'Applications.Core/Applications@2023-10-01-preview' = { ... }
+
+      resource frontend 'Applications.Core/containers@2023-10-01-preview' = {
+        name: 'frontend'
         properties: {
-          environment: environment
           application: myApplication.id
-          containers: { ... }
+          environment: environment
+          container: {
+            image: 'frontend:1.25'
+            ports: {
+              web: {
+                containerPort: 8080
+              }
+            }
+          }
           connections: {
-            postgres: {
-              source: postgres.id
+            postgresql: {
+              source: database.id
             }
           }
         }
       }
       ```
 
-      Within your container, your application code can obtain the database name, host, port, username, and password values via environment variables which are automatically created. 
-
-      - CONNECTION_POSTGRES_HOST
-      - CONNECTION_POSTGRES_PORT
-      - CONNECTION_POSTGRES_DATABASE
-      - CONNECTION_POSTGRES_USERNAME
-      - CONNECTION_POSTGRES_PASSWORD
-
+      The connection automatically injects environment variables into the container for all properties from the database. The environment variables are named `CONNECTION_<CONNECTION-NAME>_<PROPERTY-NAME>`. In this example, the connection name is `mysqldb` so the environment variables will be:
+ 
+      - CONNECTION_POSTGRESQL_DATABASE
+      - CONNECTION_POSTGRESQL_USERNAME
+      - CONNECTION_POSTGRESQL_PASSWORD
+      - CONNECTION_POSTGRESQL_HOST
+      - CONNECTION_POSTGRESQL_PORT
     apiVersions:
-      '2023-10-01-preview':
+      '2025-08-01-preview':
         schema: 
           type: object
           properties:
             environment:
               type: string
-              description: (Required) The Radius Environment ID. Typically provided by the rad CLI. The typical value is `environment`.
+              description: "(Required) The Radius Environment ID. Typically set by the rad CLI. Typically value should be `environment`."
             application:
               type: string
-              description: (Optional) The Radius Application ID when the database is app-scoped. Omit to provision a shared database in an Environment.
+              description: "(Optional) The Radius Application ID. `myApplication.id` for example."
             size:
               type: string
-              enum: [S, M, L, XL]
-              description: (Optional) The size of the PostgreSQL database.
+              enum: ['S', 'M', 'L']
+              description: "(Optional) The size of the PostgreSQL database."
             database:
               type: string
-              description: (Read-only) The name of the database.
+              description: The name of the database.
               readOnly: true
             host:
               type: string
-              description: (Read-only) The host name of the database.
+              description: The host name used to connect to the database.
               readOnly: true
             port:
               type: string
-              description: (Read-only) The port number of the database.
+              description: The port number used to connect to the database.
               readOnly: true
             username:
               type: string
-              description: (Read-only) The username for the database.
+              description: The username for connecting to the database.
               readOnly: true
             password:
               type: string
-              description: (Read-only) The password for the database.
+              description: The password for connecting to the database.
               readOnly: true
           required: [environment]
