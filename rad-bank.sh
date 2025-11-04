@@ -2,6 +2,9 @@
 set -o errexit
 _me=$(basename $0)
 
+# Get the directory of this script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
 sub_create()
 {
     if (( ${#} == 0 )); then
@@ -56,7 +59,7 @@ sub_create_radius()
   rad workspace create kubernetes $RADIUS_NAME --context $RADIUS_NAME --force
 
   echo Creating Resource Types
-  pushd types
+  pushd "$SCRIPT_DIR/types" || exit 1
   for file in *.yaml; do rad resource-type create -f "$file"; done
   for file in *.yaml; do rad bicep publish-extension --from-file "$file" --target "${file%.yaml}".tgz; done
   popd
@@ -66,7 +69,7 @@ cat > bicepconfig.json << EOF
 {
   "extensions": {
     $(
-      for file in types/*.yaml; do
+      for file in $SCRIPT_DIR/types/*.yaml; do
         if [ -f "$file" ]; then
           basename=$(basename "$file" .yaml)
           echo "      \"$basename\": \"$(pwd)/types/$basename.tgz\","
@@ -83,7 +86,7 @@ EOF
   az group create --location $AZURE_REGION --resource-group operations-dev
   az group create --location $AZURE_REGION --resource-group operations-test
   az group create --location $AZURE_REGION --resource-group operations-prod
-  pushd environments
+  pushd "$SCRIPT_DIR/environments" || exit 1
   find . -name "*.bicep" -type f | while read -r file; do
     name=$(basename "$file" .bicep)
     rad group create "$name"
@@ -223,7 +226,7 @@ sub_delete_radius()
   echo Cleaning up
   echo ------------------------------------------------
   rad workspace delete $RADIUS_NAME -y || true
-  rm types/*.tgz
+  rm $SCRIPT_DIR/types/*.tgz
   rm bicepconfig.json
   killall kubectl
   az group delete --resource-group $RADIUS_NAME -y
