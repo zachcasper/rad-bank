@@ -16,6 +16,8 @@ types:
         name: 'redis'
         properties: {
           environment: environment
+          application: myApplication.id
+          capacity: 'S'
         }
       }
       ```
@@ -58,7 +60,7 @@ types:
             capacity:
               type: string
               enum: [S, M, L]
-              description: (Optional) The capacity of the Redis server.
+              description: (Required) The memory capacity of the Redis server.
             host:
               type: string
               description: (Read-Only) The hostname used to connect to the Redis server.
@@ -79,5 +81,4 @@ types:
               type: string
               description: (Read-Only) The password used to connected to the Redis server.
               readOnly: true
-          required:
-              - environment
+          required: [environment, application, capacity]

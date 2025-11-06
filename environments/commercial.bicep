@@ -20,7 +20,7 @@ resource commercialDev 'Applications.Core/environments@2023-10-01-preview' = {
           templatePath: 'git::https://github.com/zachcasper/recipes.git//azure/postgresql'
           parameters: {
             resource_group_name: 'commercial-dev'
-            location: 'eastus'
+            location: 'northeurope'
           }
         }
       }
@@ -48,7 +48,7 @@ resource commercialTest 'Applications.Core/environments@2023-10-01-preview' = {
           templatePath: 'git::https://github.com/zachcasper/recipes.git//azure/postgresql'
           parameters: {
             resource_group_name: 'commercial-test'
-            location: 'eastus'
+            location: 'northeurope'
           }
         }
       }
@@ -76,7 +76,7 @@ resource commercialProd 'Applications.Core/environments@2023-10-01-preview' = {
           templatePath: 'git::https://github.com/zachcasper/recipes.git//azure/postgresql'
           parameters: {
             resource_group_name: 'commercial-prod'
-            location: 'eastus'
+            location: 'northeurope'
           }
         }
       }
